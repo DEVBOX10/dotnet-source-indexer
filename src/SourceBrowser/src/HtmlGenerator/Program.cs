@@ -278,16 +278,16 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
             var processedAssemblyList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var typeForwards = new Dictionary<ValueTuple<string, string>, string>();
 
-            var domain = AppDomain.CreateDomain("TypeForwards");
-            foreach (var path in solutionFilePaths)
-            {
-                using (Disposable.Timing($"Reading type forwards from {path}"))
-                {
-                    GetTypeForwards(path, properties, typeForwards, domain);
-                }
-            }
-            AppDomain.Unload(domain);
-            domain = null;
+            // var domain = AppDomain.CreateDomain("TypeForwards");
+            // foreach (var path in solutionFilePaths)
+            // {
+            //     using (Disposable.Timing($"Reading type forwards from {path}"))
+            //     {
+            //         GetTypeForwards(path, properties, typeForwards, domain);
+            //     }
+            // }
+            // AppDomain.Unload(domain);
+            // domain = null;
 
             foreach (var path in solutionFilePaths)
             {
