@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
+using Microsoft.SourceBrowser.BinLogParser;
 using Microsoft.SourceBrowser.BuildLogParser;
 using Microsoft.SourceBrowser.Common;
 
@@ -189,7 +190,7 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
 
             if (Paths.SolutionDestinationFolder == null)
             {
-                Paths.SolutionDestinationFolder = Path.Combine(Microsoft.SourceBrowser.Common.Paths.BaseAppFolder, "Index");
+                Paths.SolutionDestinationFolder = Path.Combine(Microsoft.SourceBrowser.Common.Paths.BaseAppFolder, "index");
             }
 
             var websiteDestination = Paths.SolutionDestinationFolder;

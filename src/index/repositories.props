@@ -2,16 +2,18 @@
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ArcadeBuildCmd>
-      powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "eng/common/build.ps1 -restore -build -binarylog -ci"
+      powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "eng/common/build.ps1 -restore -build -binarylog -nodeReuse:$false"
     </ArcadeBuildCmd>
   </PropertyGroup>
   <ItemGroup>
-    <Repository Include="runtime">
+    <RepositoryV2 Include="arcade">
+      <RepoName>dotnet-arcade</RepoName>
+      <Url>https://github.com/dotnet/arcade</Url>
+    </RepositoryV2>
+    <RepositoryV2 Include="runtime">
+      <RepoName>dotnet-runtime</RepoName>
       <Url>https://github.com/dotnet/runtime</Url>
-      <PrepareCommand>
-        build.cmd -subset libs.ref+libs.src -binarylog -os Linux -ci /p:ILLinkTrimAssembly=false
-      </PrepareCommand>
-    </Repository>
+    </RepositoryV2>
     <Repository Include="winforms">
       <Url>https://github.com/dotnet/winforms</Url>
       <PrepareCommand>

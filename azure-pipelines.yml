@@ -17,6 +17,9 @@ jobs:
 
   timeoutInMinutes: 960
 
+  variables:
+  - group: source-dot-net stage1 variables
+
   steps:
   - checkout: self
     clean: true
@@ -50,12 +53,29 @@ jobs:
       projects: |
         **\*.sln
 
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      projects: |
+        src\source-indexer.sln
+        src\SourceBrowser\SourceBrowser.sln
+      arguments: '/p:PackageOutputPath=$(Build.ArtifactStagingDirectory)/packages'
+  
+  - task: NuGetCommand@2
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '9ee6d478-d288-47f7-aacc-f6e6d082ae6d/d1622942-d16f-48e5-bc83-96f4539e7601'
+
   - task: VSBuild@1
     displayName: Clone All Repositories
     inputs:
       solution: build.proj
       msbuildArgs: /t:Clone
       msbuildArchitecture: x64
+    env:
+      source-dot-net-stage1-blob-container-url: $(source-dot-net-stage1-blob-container-url)
 
   - powershell: |
       Stop-Process -Name "dotnet"
@@ -98,6 +118,8 @@ jobs:
       solution: build.proj
       msbuildArgs: /t:Build
       msbuildArchitecture: x64
+    env:
+      source-dot-net-stage1-blob-container-url: $(source-dot-net-stage1-blob-container-url)
 
   - powershell: |
       deployment/install-tool.ps1 -Name 'azure-cli' -Version 2.8.0 -TestPath '/wbin/az.cmd' -BinPath '/wbin/'
