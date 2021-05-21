@@ -3,7 +3,7 @@ schedules:
   displayName: Every day at 10:00 UTC
   branches:
     include:
-    - master
+    - main
   always: true
 
 
@@ -15,7 +15,7 @@ jobs:
     name: NetCoreInternal-Pool
     queue: BuildPool.Windows.10.Amd64.VS2019
 
-  timeoutInMinutes: 960
+  timeoutInMinutes: 360
 
   variables:
   - group: source-dot-net stage1 variables
@@ -72,7 +72,7 @@ jobs:
     displayName: Clone All Repositories
     inputs:
       solution: build.proj
-      msbuildArgs: /t:Clone
+      msbuildArgs: /t:Clone /v:q /bl:$(Build.ArtifactStagingDirectory)/logs/clone.binlog
       msbuildArchitecture: x64
     env:
       source-dot-net-stage1-blob-container-url: $(source-dot-net-stage1-blob-container-url)
@@ -116,7 +116,7 @@ jobs:
     displayName: Build source index
     inputs:
       solution: build.proj
-      msbuildArgs: /t:Build
+      msbuildArgs: /t:Build /v:q /bl:$(Build.ArtifactStagingDirectory)/logs/build.binlog
       msbuildArchitecture: x64
     env:
       source-dot-net-stage1-blob-container-url: $(source-dot-net-stage1-blob-container-url)
@@ -223,5 +223,10 @@ jobs:
         -WebappName netsourceindex
         -StorageAccountName netsourceindex
 
+  - publish: $(Build.ArtifactStagingDirectory)/logs
+    artifact: logs
+    condition: always()
+
   - publish: bin/repo
     artifact: repo-logs
+    condition: always()

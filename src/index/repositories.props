@@ -19,15 +19,10 @@
       <PrepareCommand>
         $(ArcadeBuildCmd)
       </PrepareCommand>
+      <Branch>main</Branch>
     </Repository>
     <Repository Include="wpf">
       <Url>https://github.com/dotnet/wpf</Url>
-      <PrepareCommand>
-        $(ArcadeBuildCmd)
-      </PrepareCommand>
-    </Repository>
-    <Repository Include="corefxlab">
-      <Url>https://github.com/dotnet/corefxlab</Url>
       <PrepareCommand>
         $(ArcadeBuildCmd)
       </PrepareCommand>
@@ -37,10 +32,11 @@
       <PrepareCommand>
         $(ArcadeBuildCmd)
       </PrepareCommand>
+      <Branch>main</Branch>
     </Repository>
     <Repository Include="msbuild">
       <Url>https://github.com/dotnet/msbuild</Url>
-      <Branch>master</Branch>
+      <Branch>main</Branch>
       <DeepClone>true</DeepClone>
       <PrepareCommand>
         $(ArcadeBuildCmd)
@@ -57,22 +53,24 @@
       <PrepareCommand>
         $(ArcadeBuildCmd)
       </PrepareCommand>
+      <Branch>main</Branch>
     </Repository>
     <Repository Include="aspnetcore">
       <Url>https://github.com/dotnet/aspnetcore</Url>
       <CheckoutSubmodules>true</CheckoutSubmodules>
       <PrepareCommand>
-        build.cmd -BinaryLog -BuildManaged -NoBuildNative -NoBuildNodeJS -NoBuildJava
+        .\eng\build.cmd -BinaryLog -BuildManaged -NoBuildNative -NoBuildNodeJS -NoBuildJava
       </PrepareCommand>
-    </Repository>
-    <Repository Include="dotnet-extensions">
-      <Url>https://github.com/dotnet/extensions</Url>
-      <PrepareCommand>
-        $(ArcadeBuildCmd)
-      </PrepareCommand>
+      <Branch>main</Branch>
     </Repository>
     <Repository Include="performance">
       <Url>https://github.com/dotnet/performance</Url>
+      <PrepareCommand>
+        $(ArcadeBuildCmd) -projects src\benchmarks\micro\MicroBenchmarks.sln
+      </PrepareCommand>
+    </Repository>
+    <Repository Include="sdk">
+      <Url>https://github.com/dotnet/sdk</Url>
       <PrepareCommand>
         $(ArcadeBuildCmd) -projects src\benchmarks\micro\MicroBenchmarks.sln
       </PrepareCommand>
