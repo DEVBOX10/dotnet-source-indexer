@@ -32,14 +32,15 @@ jobs:
       Contents: '**/*'
 
   - task: UseDotNet@2
-    displayName: Use .Net Core sdk 3.1.201
+    displayName: Install .NET Sdk
     inputs:
-      version: 3.1.201
+      useGlobalJson: true
 
   - task: UseDotNet@2
-    displayName: Use .Net Core sdk 2.1.805
+    displayName: Install .NET 3.1 runtime
     inputs:
-      version: 2.1.805
+      packageType: runtime
+      version: 3.1.x
 
   - script: |
       dotnet tool restore
@@ -47,6 +48,7 @@ jobs:
     displayName: Check Allow Prerelease Sdks
 
   - task: DotNetCoreCLI@2
+    displayName: dotnet restore
     inputs:
       command: custom
       custom: restore
@@ -54,6 +56,7 @@ jobs:
         **\*.sln
 
   - task: DotNetCoreCLI@2
+    displayName: dotnet build
     inputs:
       command: 'build'
       projects: |
@@ -61,7 +64,10 @@ jobs:
         src\SourceBrowser\SourceBrowser.sln
       arguments: '/p:PackageOutputPath=$(Build.ArtifactStagingDirectory)/packages'
   
+  - task: ComponentGovernanceComponentDetection@0
+
   - task: NuGetCommand@2
+    displayName: NuGet push
     inputs:
       command: 'push'
       packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*.nupkg'
@@ -86,35 +92,41 @@ jobs:
       $installDir = "$(Agent.ToolsDirectory)/dotnet"
 
       ls -Recurse -Include global.json | %{
-        Write-Host "Processing $_"
-        $v = $_ | Get-Content -Raw | ConvertFrom-Json | %{ if ($_.tools.dotnet) {$_.tools.dotnet} else {$_.sdk.version} }
-        if (-not $v)
-        {
-          Write-Host "No version found in $_"
-          return
-        }
-        $isSensibleVersion = $v.Split('.')[0] -as [int] -le 30
-        if (-not $isSensibleVersion)
-        {
-          Write-Host "Skipping bogus version $v"
-          return
-        }
+        try {
+          Write-Host "Processing $_"
+          $v = $_ | Get-Content -Raw | ConvertFrom-Json | %{ if ($_.tools.dotnet) {$_.tools.dotnet} else {$_.sdk.version} }
+          if (-not $v)
+          {
+            Write-Host "No version found in $_"
+            return
+          }
+          $isSensibleVersion = $v.Split('.')[0] -as [int] -le 30
+          if (-not $isSensibleVersion)
+          {
+            Write-Host "Skipping bogus version $v"
+            return
+          }
 
-        Write-Host "Installing .NET CLI version $v"
-        try
-        {
-          & $installScript -Version $v -InstallDir $installDir -NoPath
-        }
-        catch
-        {
+          Write-Host "Installing .NET CLI version $v"
           try
           {
-            & $installScript -Version $v -InstallDir $installDir -NoPath -AzureFeed https://dotnetbuilds.azureedge.net/public
+            & $installScript -Version $v -InstallDir $installDir -NoPath
           }
           catch
           {
-            throw "Unable to install Version $v"
+            try
+            {
+              & $installScript -Version $v -InstallDir $installDir -NoPath -AzureFeed https://dotnetbuilds.azureedge.net/public
+            }
+            catch
+            {
+              throw "Unable to install Version $v"
+            }
           }
+        }
+        catch
+        {
+          Write-Host "Skipping bad json file."
         }
        }
     displayName: 'Install Required Versions of .NET Core'

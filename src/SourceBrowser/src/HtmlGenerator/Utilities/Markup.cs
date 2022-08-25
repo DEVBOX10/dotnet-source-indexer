@@ -364,7 +364,7 @@ Enter a type or member name or <a href=""/#q=assembly%20"" target=""_top"" class
 
         private static string partialTypeDisambiguationFileTemplate = @"<!DOCTYPE html>
 <html><head><link rel=""stylesheet"" href=""{0}"">
-</head><body><div class=""partialTypeHeader"">Partial Type</div>
+</head><body><h2 class=""partialTypeHeader"">Partial Type</h2>
 {1}
 </body></html>";
 
@@ -445,7 +445,7 @@ Enter a type or member name or <a href=""/#q=assembly%20"" target=""_top"" class
             var url = symbol.GetUrl();
             sb.AppendFormat("<a href=\"{0}\" target=\"s\"><div class=\"resultItem\" onClick=\"resultClick(this);\">", url);
             sb.Append("<div class=\"resultLine\">");
-            sb.AppendFormat("<img src=\"/content/icons/{0}\" height=\"16\" width=\"16\" />", GetGlyph(symbol) + ".png");
+            sb.AppendFormat("<img role=\"presentation\" src=\"/content/icons/{0}\" height=\"16\" width=\"16\" />", GetGlyph(symbol) + ".png");
             sb.AppendFormat("<div class=\"resultKind\">{0}</div>", symbol.Kind);
             sb.AppendFormat("<div class=\"resultName\">{0}</div>", Markup.HtmlEscape(symbol.Name));
             sb.AppendLine("</div>");
